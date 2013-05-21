@@ -9,14 +9,6 @@ int turningPlateMotorPin = 6;
 int turningPlateLeftSpeed = 255;
 int turningPlateRightSpeed = 255;
 
-// Declaratie kleurensensor
-int blueSensorPin = A0;
-int blueSensorValue;
-int greenSensorPin = A1;
-int greenSensorValue;
-int redSensorPin = A2;
-int redSensorValue;
-
 // Commando's declaratie
 int commands[30];
 
@@ -82,22 +74,6 @@ void startTurningPlate(String Direction){
 
 void stopTurningPlate(){
   analogWrite(turningPlateMotorPin, 0);
-}
-
-String checkColor(){
-  blueSensorValue = analogRead(blueSensorPin);
-  greenSensorValue = analogRead(greenSensorPin);
-  redSensorValue = analogRead(redSensorPin);
-  
-  // if...
-  
-  // return color
-}
-
-boolean checkProduct(){
-  // checkt of er een product klaar staat
-  
-  // if...
 }
 
 void productToBin(int newBin){
