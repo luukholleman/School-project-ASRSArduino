@@ -1,23 +1,24 @@
 // Declaratie lopende band
-int transportingBeltDirectionPin = 4;
-int transportingBeltMotorPin = 5;
-int transportingBeltSpeed = 255;
+#define TRANSPORTINGBELTDIRECTIONPIN 4
+#define TRANSPORTINGBELTMOTORPIN 5
+#define TRANSPORTINGBELTSPEED 255
 
 // Declaratie draaischijf
-int turningPlateDirectionPin = 7;
-int turningPlateMotorPin = 6;
-int turningPlateLeftSpeed = 255;
-int turningPlateRightSpeed = 255;
+#define TURNINGPLATEDIRECTIONPIN 7
+#define TURNINGPLATEMOTORPIN 6
+#define TURNINGPLATELEFTSPEED 255
+#define TURNINGPLATERIGHTSPEED 255
 
-// Vaste variabelen declaratie
-byte currentBin = 0;
+// Declaratie variabelen
+#define STARTINGBIN 100
+byte currentBin;
 
 
 void setup() {                
-  pinMode(transportingBeltDirectionPin, OUTPUT);
-  pinMode(turningPlateDirectionPin, OUTPUT);
-  pinMode(transportingBeltMotorPin, OUTPUT);
-  pinMode(turningPlateMotorPin, OUTPUT);
+  pinMode(TRANSPORTINGBELTDIRECTIONPIN, OUTPUT);
+  pinMode(TRANSPORTINGBELTMOTORPIN, OUTPUT);
+  pinMode(TURNINGPLATEDIRECTIONPIN, OUTPUT);
+  pinMode(TURNINGPLATEMOTORPIN, OUTPUT);
   Serial.begin(9600);
   
   // Debug only: byte om aan te geven dat de connectie werkt
@@ -30,32 +31,23 @@ void loop() {
   // Checkt op commando's van de PC
   if(Serial.available() > 0){
     
-    // Haalt de byte op die door JAVA is verzonden
-    byte Byte = Serial.read();
+    // Startlocatie
+    currentBin = STARTINGBIN;
     
+    // Haalt de byte op die door JAVA is verzonden
+    byte newBin = Serial.read();
     
     // Beweegt de lopende band naar de goede bin
-    while(newBin != currentBin){
-      if(newBin > currentBin){
-        startTurningPlate("right");
-        delay(1000);
-        stopTurningPlate();
-        currentBin = currentBin + 1;
-      }
-      
-      if(newBin < currentBin){
-        startTurningPlate("left");
-        delay(1000);
-        stopTurningPlate();
-        currentBin = currentBin - 1;
-      }
-    }
+    turnToBin(newBin);
     
     // Plaatst product in bin
     startTransportingBelt();
     delay(1000);
     stopTransportingBelt();
     
+    // Draait de lopende band terug naar de startpositie
+    turnToBin(STARTINGBIN);
+        
     // Geeft een bevestiging dat de opdracht is uitgevoerd: 101 is verzonnen
     Serial.write(101);
   }
@@ -64,26 +56,44 @@ void loop() {
 
 // Functies
 void startTransportingBelt(){
-  analogWrite(transportingBeltMotorPin, transportingBeltSpeed);
-  digitalWrite(transportingBeltDirectionPin, HIGH);
+  analogWrite(TRANSPORTINGBELTMOTORPIN, TRANSPORTINGBELTSPEED);
+  digitalWrite(TRANSPORTINGBELTDIRECTIONPIN, HIGH);
 }
 
 void stopTransportingBelt(){
-  analogWrite(transportingBeltMotorPin, 0);
+  analogWrite(TRANSPORTINGBELTMOTORPIN, 0);
 }
 
 void startTurningPlate(String Direction){
   if(Direction == "left"){
-    analogWrite(turningPlateMotorPin, turningPlateLeftSpeed);
-    digitalWrite(turningPlateDirectionPin, LOW);
+    analogWrite(TURNINGPLATEMOTORPIN, TURNINGPLATELEFTSPEED);
+    digitalWrite(TURNINGPLATEDIRECTIONPIN, LOW);
   }
   
   if(Direction == "right"){
-    analogWrite(turningPlateMotorPin, turningPlateRightSpeed);
-    digitalWrite(turningPlateDirectionPin, HIGH);
+    analogWrite(TURNINGPLATEMOTORPIN, TURNINGPLATERIGHTSPEED);
+    digitalWrite(TURNINGPLATEDIRECTIONPIN, HIGH);
   }
 }
 
 void stopTurningPlate(){
-  analogWrite(turningPlateMotorPin, 0);
+  analogWrite(TURNINGPLATEMOTORPIN, 0);
+}
+
+void turnToBin(byte newBin){
+  while(newBin != currentBin){
+    if(newBin > currentBin){
+      startTurningPlate("right");
+      delay(1000);
+      stopTurningPlate();
+      currentBin = currentBin + 1;
+    }
+    
+    if(newBin < currentBin){
+      startTurningPlate("left");
+      delay(1000);
+      stopTurningPlate();
+      currentBin = currentBin - 1;
+    }
+  }
 }
