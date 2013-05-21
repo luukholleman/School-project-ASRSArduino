@@ -1,39 +1,42 @@
 #include <Wire.h>
 #include <Bricktronics.h>
 
-Bricktronics brick = Bricktronics();
-Motor m = Motor(&brick, 1); 
-
-int currentX = -2;
-int currentY = 0;
-
-#define SPEED_X      128
-#define SPEED_Y      64
-#define DEGREES_X    1000
-#define DEGREES_Y    400
-
-#define STOP_MOTOR_POWER  32128
+#define STOP_MOTOR_POWER  128
 #define STOP_MOTOR_TIME   25
+
+Bricktronics brick = Bricktronics();
+Motor horMotor = Motor(&brick, 1); 
+Motor verMotor = Motor(&brick, 2);
+
+int currentX = 0;
+int currentY = 0;
 
 void moveRobot(int toX, int toY)
 {
   int x = toX - currentX;
   int y = toY - currentY;
 
-  int degX = x * DEGREES_X;
+
+  if(x < 0)
+  {
+  }
+  else
+  {
+    for(int _x=0;_x<x;_x++)
+    {
+      horMotor.set_speed(-128);
+      waitFor(horMotor, 500);
+      horMotor.set_speed(STOP_MOTOR_POWER);
+      delay(STOP_MOTOR_TIME);
+      horMotor.stop();
+    }
+  }
+  
+  currentX=toX;
+  currentY=toY;
 }
 
-int formulaX(int coords)
-{
-  //return 360;
-  Serial.print("FormulaX: ");
-  Serial.print((coords * 400) - 40,DEC);
-  
-  
-  return (coords * 400) - 40;
-}
-
-void waitFor(int degrees)
+void waitFor(Motor m, int degrees)
 {
   int sPos = m.get_pos();
 
@@ -43,44 +46,19 @@ void waitFor(int degrees)
     while(m.get_pos() > sPos + degrees); 
 }
 
-
-void testA()
-{
-}
-
-
-void testB()
-{
-}
-
-
 void setup()
 {
   Serial.begin(9600);
   Serial.println("Beginning");
   brick.begin();
-  m.begin();
+  horMotor.begin();
 
-  m.set_speed(-SPEED_X);
-  waitFor(formulaX(1));
-  m.set_speed(STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  m.stop();
-
-  delay(3000);
-
-
-  //Turn 360 'degrees'
-  m.set_speed(SPEED_X);
-  waitFor(-formulaX(1));
-  m.set_speed(-STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  m.stop();
-
+  moveRobot(1, 0);
 }
 
 void loop()
 {
 
 }
+
 
