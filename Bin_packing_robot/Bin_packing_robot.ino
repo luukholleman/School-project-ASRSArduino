@@ -9,13 +9,8 @@ int turningPlateMotorPin = 6;
 int turningPlateLeftSpeed = 255;
 int turningPlateRightSpeed = 255;
 
-// Commando's declaratie
-int commands[30];
-
-
-
 // Vaste variabelen declaratie
-int currentBin = 0;
+byte currentBin = 0;
 
 
 void setup() {                
@@ -23,9 +18,6 @@ void setup() {
   pinMode(turningPlateDirectionPin, OUTPUT);
   pinMode(transportingBeltMotorPin, OUTPUT);
   pinMode(turningPlateMotorPin, OUTPUT);
-  pinMode(blueSensorPin, INPUT);
-  pinMode(greenSensorPin, INPUT);
-  pinMode(redSensorPin, INPUT);
   Serial.begin(9600);
   
   // Debug only: byte om aan te geven dat de connectie werkt
@@ -41,11 +33,31 @@ void loop() {
     // Haalt de byte op die door JAVA is verzonden
     byte Byte = Serial.read();
     
-    // Onderneemt een actie
-    commands[Byte];
+    
+    // Beweegt de lopende band naar de goede bin
+    while(newBin != currentBin){
+      if(newBin > currentBin){
+        startTurningPlate("right");
+        delay(1000);
+        stopTurningPlate();
+        currentBin = currentBin + 1;
+      }
+      
+      if(newBin < currentBin){
+        startTurningPlate("left");
+        delay(1000);
+        stopTurningPlate();
+        currentBin = currentBin - 1;
+      }
+    }
+    
+    // Plaatst product in bin
+    startTransportingBelt();
+    delay(1000);
+    stopTransportingBelt();
     
     // Geeft een bevestiging dat de opdracht is uitgevoerd: 101 is verzonnen
-    Serial.write(101);   
+    Serial.write(101);
   }
 }
 
@@ -75,26 +87,3 @@ void startTurningPlate(String Direction){
 void stopTurningPlate(){
   analogWrite(turningPlateMotorPin, 0);
 }
-
-void productToBin(int newBin){
-  while(newBin != currentBin){
-    if(newBin > currentBin){
-      startTurningPlate("right");
-      delay(1000);
-      stopTurningPlate();
-      currentBin = currentBin + 1;
-    }
-    
-    if(newBin < currentBin){
-      startTurningPlate("left");
-      delay(1000);
-      stopTurningPlate();
-      currentBin = currentBin - 1;
-    }
-  }
-  
-  startTransportingBelt();
-  delay(1000);
-  stopTransportingBelt();
-}
-
