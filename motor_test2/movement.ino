@@ -2,12 +2,39 @@
 #define STOP_MOTOR_POWER  128
 #define STOP_MOTOR_TIME   25
 
+#define HOR_MOTOR_POINTS  410
 //Huidige locatie
 int currentX = 0;
 int currentY = 0;
 
 //Is de robot bij de binpacker?
 boolean atBinPacker = false;
+
+void moveRobotNew(int toX, int toY)
+{
+  //Wanneer je niet bij de binapcker bent, ga er naar toe
+  if(!atBinPacker)
+    moveToBinPacker();
+    
+  //Bereken verschil in huidige locatie en doel locatie  
+  int moveX = toX - currentX;
+  int moveY = toY - currentY;
+  
+  //Bereken posities om te bewegen
+  long horPos = HOR_MOTOR_POINTS * moveX;
+  
+  //Verplaats
+  moveHorizontalPositions(horPos);
+  
+  //Sla nieuwe position op
+  currentX = toX;
+  currentY = toY;
+}
+
+void moveToWarehouseNew()
+{
+  moveHorizontalPositions(800);
+}
 
 //Ga naar XY...
 void moveRobot(int toX, int toY)
@@ -73,62 +100,11 @@ void moveRobot(int toX, int toY)
   currentY=toY;
 }
 
-//Pak het product op
-void pickup()
-{
-  //Fork uitschuiven
-  extractFork();
-
-  //Omhoog gaan
-  verMotor.set_speed(128);
-  waitFor(verMotor, -200);
-  
-  verMotor.set_speed(-STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  
-  verMotor.stop();
-  delay(1000);
-
-  //Fork inschuiven
-  withdrawFork();
-
-  //Ga terug naar beneden
-  resetHeight();
-}
-
-//Zet het product neer
-void dropdown()
-{
-  //Omhoog gaan
-  verMotor.set_speed(128);
-  waitFor(verMotor, -150);
-  verMotor.set_speed(-STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  verMotor.stop();
-  delay(1000);
-
-  //Doe de fork 500 ms naar voren
-  extractFork(500);
-
-  //Ga weer naar beneden
-  verMotor.set_speed(-128);
-  waitFor(verMotor, 150);
-  verMotor.set_speed(-STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  verMotor.stop();
-  delay(1000); 
-  
-  //Schijf de fork weer in
-  withdrawFork();
-}
-
 //Ga naar de bin packer
 void moveToBinPacker()
 {
-  //Ga helemaal naar voren tot dat de knop is aangeraakt
-  horMotor.set_speed(128);
-  while(horButton.is_released()); 
-  horMotor.stop();
+  //Ga naar het einde
+  moveToHorizontalEnd();
 
   //Sla op dat je bij de binpacker bent
   atBinPacker= true;  

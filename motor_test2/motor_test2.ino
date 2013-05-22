@@ -5,22 +5,23 @@ void setup()
 {
   Serial.begin(9600);
 
-  fork_setup();
+  //fork_setup();
   motor_setup();
   
   delay(1000);
   
-  resetHeight();
+  //resetHeight();
   
   delay(1000);
 
 
   moveToBinPacker();
-  moveToWarehouse();
-  moveRobot(0, 0);
-  pickup();
-  moveToBinPacker();
-  dropdown();
+  moveToWarehouseNew();
+  
+  moveRobotNew(2, 1);
+  //pickup();
+  //moveToBinPacker();
+  //dropdown();
 }
 
 void loop()
