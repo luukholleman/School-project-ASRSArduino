@@ -1,48 +1,45 @@
+/*
+ * Code om producten te behandelen
+ * @author Tim Potze
+*/
+
+#define PICKUP_HEIGHT            240
+#define DROPDOWN_HEIGHT          500
+#define BINPACKER_FORK_DISTANCE  500
+
 //Pak het product op
 void pickup()
 {
   //Fork uitschuiven
-  extractFork();
-
+  slideForkOut();
+  
   //Omhoog gaan
-  verMotor.set_speed(128);
-  waitFor(verMotor, -200);
+  moveVerticalPositions(-PICKUP_HEIGHT);
   
-  verMotor.set_speed(-STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  
-  verMotor.stop();
-  delay(1000);
-
   //Fork inschuiven
-  withdrawFork();
+  slideForkIn();
 
   //Ga terug naar beneden
-  resetHeight();
+  moveVerticalPositions(PICKUP_HEIGHT);
 }
 
 //Zet het product neer
 void dropdown()
 {
   //Omhoog gaan
-  verMotor.set_speed(128);
-  waitFor(verMotor, -150);
-  verMotor.set_speed(-STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  verMotor.stop();
-  delay(1000);
+  moveVerticalPositions(-DROPDOWN_HEIGHT);
 
-  //Doe de fork 500 ms naar voren
-  extractFork(500);
+  //Doe de fork BINPACKER_FORK_DISTANCE ms naar voren
+  slideForkOut(BINPACKER_FORK_DISTANCE);
 
   //Ga weer naar beneden
-  verMotor.set_speed(-128);
-  waitFor(verMotor, 150);
-  verMotor.set_speed(-STOP_MOTOR_POWER);
-  delay(STOP_MOTOR_TIME);
-  verMotor.stop();
-  delay(1000); 
+  moveToVerticalEnd();
+  //moveToBottom();
+  //moveVerticalPositions(DROPDOWN_HEIGHT);
   
   //Schijf de fork weer in
-  withdrawFork();
+  slideForkIn();
+  
+  //Ga weer iets naar boven
+  moveFromBottomToStartHeight();
 }

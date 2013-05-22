@@ -1,5 +1,19 @@
-#define HORIZONTAL_SPEED    128
-#define HORIZONTAL_LOW_SPEED  32
+/*
+ * Code om mindstorms motoren aan te sturen
+ * @author Tim Potze
+*/
+
+#define HORIZONTAL_SPEED        128
+#define HORIZONTAL_LOW_SPEED    32
+#define MAX_HORIZONTAL_OFFSET   12
+
+#define VERTICAL_SPEED          128
+#define VERTICAL_LOW_SPEED      60
+#define MAX_VERTICAL_OFFSET     20
+
+#define DELAY_AFTER_MOVING      75
+#define POLLING_DELAY           2
+
 //Bricktronics. Awesome.
 Bricktronics brick = Bricktronics();
 
@@ -9,77 +23,82 @@ Motor verMotor = Motor(&brick, 2);
 Button horButton = Button(&brick, 1);
 Button verButton = Button(&brick, 2);
 
-//Wacht voor motor m om degrees graden gedraaid te hebben
-void waitFor(Motor m, long degrees)
+//Ga met motor naar pos met speed
+void moveToPosition(Motor m, long pos, int speed, int lowspeed, int maxoffset)
 {
-  //Verkrijg de start positie
-  long sPos = m.get_pos();
-
-  //Als de graden onder 0 zijn, een andere behandeling geven
-  if(0 < degrees)
-    while(m.get_pos() < sPos + degrees) delay(2);  
-  else
-    while(m.get_pos() > sPos + degrees) delay(2); 
-
-  //Debug
-  Serial.print("waitFor END@");
-  Serial.println(m.get_pos());
-}
-
-void moveToPosition(Motor m, long pos)
-{
-  moveToPosition(m, pos, HORIZONTAL_SPEED);
-}
-
-void moveToPosition(Motor m, long pos, int dirspeed)
-{
-  int speed = dirspeed * (pos > m.get_pos() ? -1 : 1);
- 
-  boolean check = m.get_pos() > pos;
-  
-  Serial.print("Moving at ");
-  Serial.print(speed);
-  Serial.print(" to ");
-  Serial.print(pos);
-  Serial.print(" from "); 
-  Serial.print(m.get_pos());
-  Serial.print(" check equals ");
-  Serial.println(check);
-  
-  m.set_speed(speed);
-  
-  while((m.get_pos() >= pos) == check) delay(2);
+  //Als al binnen de offset, niks doen!
+  if(abs(m.get_pos() - pos) < maxoffset)
+    return;
     
+  //Bereken of de snelheid vooruit of achteruit moet
+  speed *= (pos > m.get_pos() ? -1 : 1);
+ 
+  //Bereken aan welke kant van het doel de motor nu is
+  boolean check = m.get_pos() > pos;
+
+  //Beweeg, en wacht tot de motor aan de andere kant van het doel is
+  m.set_speed(speed);  
+  while((m.get_pos() > pos) == check) delay(POLLING_DELAY);   
   m.stop();
   
-  delay(50);
-  
-  Serial.print("moveToPosition END@");
-  Serial.println(m.get_pos());
-  
-  //Probeer een maximum afweiking van 10 te krijgen)
-  Serial.println(abs(m.get_pos() - pos), DEC);
-  
-  if(abs(m.get_pos() - pos) > 10)
-    moveToPosition(m, pos, HORIZONTAL_LOW_SPEED);
+  //Wact even voor het uitrollen
+  delay(60);
+  Serial.print("offset:");
+  Serial.println(abs(m.get_pos() - pos));
+  //Probeer een maximum afweiking van MAX_MOTOR_OFFSET te krijgen)
+  if(abs(m.get_pos() - pos) > maxoffset)
+    moveToPosition(m, pos, lowspeed, lowspeed, maxoffset);
     
 }
 
-void movePositions(Motor m, long pos)
+//Verplaats x posities met horMotor
+void moveHorizontalPositions(long pos, int maxoffset)
 {
-  moveToPosition(m, m.get_pos() + pos);
+   //Nutteloze dingen doen wij niet.
+  if(pos == 0)
+    return;
+    
+  //Ga naar doel toe
+  moveToPosition(horMotor, horMotor.get_pos() + pos, HORIZONTAL_SPEED, HORIZONTAL_LOW_SPEED, maxoffset);
 }
 
 void moveHorizontalPositions(long pos)
 {
-  movePositions(horMotor, pos);
+  moveHorizontalPositions(pos, MAX_HORIZONTAL_OFFSET);
 }
 
+//Verplaats x posities met verMotor
+void moveVerticalPositions(long pos, int maxoffset)
+{
+   //Nutteloze dingen doen wij niet.
+  if(pos == 0)
+    return;
+    
+  //Ga naar doel toe
+  moveToPosition(verMotor, verMotor.get_pos() + pos, VERTICAL_SPEED, VERTICAL_LOW_SPEED, MAX_VERTICAL_OFFSET);
+}
+
+void moveVerticalPositions(long pos)
+{
+  moveVerticalPositions(pos, MAX_VERTICAL_OFFSET);
+}
+
+//Ga horizontaal naar het einde
 void moveToHorizontalEnd()
 {
+  //Zet de motor aan totdat de knop aan is geraakt
   horMotor.set_speed(HORIZONTAL_SPEED);
   while(horButton.is_released()); 
   horMotor.stop();
+}
+
+//Ga verticaal naar het einde
+void moveToVerticalEnd()
+{
+  //Zet de motor aan totdat de knop aan is geraakt
+  verMotor.set_speed(-VERTICAL_SPEED);
+  while(verButton.is_released()); 
+  verMotor.stop();
 }
 
 void motor_setup()

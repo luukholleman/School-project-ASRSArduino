@@ -1,27 +1,40 @@
+/*
+ * Main code voor testen motor
+ * @author Tim Potze
+*/
+
 #include <Wire.h>
 #include <Bricktronics.h>
 
 void setup()
 {
   Serial.begin(9600);
-
-  //fork_setup();
+  fork_setup();
   motor_setup();
+   
+  moveToBottom();
   
-  delay(1000);
+  //Syncs
+  moveToBinPacker(); //Also a test
   
-  //resetHeight();
   
-  delay(1000);
-
-
-  moveToBinPacker();
-  moveToWarehouseNew();
+  //Pick up all products (test)
   
-  moveRobotNew(2, 1);
-  //pickup();
-  //moveToBinPacker();
+  for(int y=0;y<2;y++)
+  {
+    for(int x=0;x<3;x++)
+    {
+      moveToWarehouse();
+      moveRobot(x, y);
+      pickup();
+      moveToBinPacker();
+      dropdown();
+    }
+  }
+  
+  
   //dropdown();
+  
 }
 
 void loop()
