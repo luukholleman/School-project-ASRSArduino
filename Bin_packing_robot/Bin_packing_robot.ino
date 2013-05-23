@@ -2,12 +2,15 @@
 #define TRANSPORTINGBELTDIRECTIONPIN 4
 #define TRANSPORTINGBELTMOTORPIN 5
 #define TRANSPORTINGBELTSPEED 200
+#define TRANSPORTINGBELTDELAY 1000
 
 // Declaratie draaischijf
 #define TURNINGPLATEDIRECTIONPIN 7
 #define TURNINGPLATEMOTORPIN 6
 #define TURNINGPLATELEFTSPEED 200
 #define TURNINGPLATERIGHTSPEED 200
+#define TURNLEFTDELAY 500
+#define TURNRIGHTDELAY 500
 
 // Declaratie variabelen
 #define STARTINGBIN 100
@@ -42,7 +45,7 @@ void loop() {
     
     // Plaatst product in bin
     startTransportingBelt();
-    delay(1000);
+    delay(TRANSPORTINGBELTDELAY);
     stopTransportingBelt();
     
     // Draait de lopende band terug naar de startpositie
@@ -84,14 +87,14 @@ void turnToBin(byte newBin){
   while(newBin != currentBin){
     if(newBin > currentBin){
       startTurningPlate("right");
-      delay(500);
+      delay(TURNRIGHTDELAY);
       stopTurningPlate();
       currentBin = currentBin + 1;
     }
     
     if(newBin < currentBin){
       startTurningPlate("left");
-      delay(500);
+      delay(TURNLEFTDELAY);
       stopTurningPlate();
       currentBin = currentBin - 1;
     }
