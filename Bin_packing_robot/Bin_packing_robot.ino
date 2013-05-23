@@ -1,13 +1,13 @@
 // Declaratie lopende band
 #define TRANSPORTINGBELTDIRECTIONPIN 4
 #define TRANSPORTINGBELTMOTORPIN 5
-#define TRANSPORTINGBELTSPEED 255
+#define TRANSPORTINGBELTSPEED 200
 
 // Declaratie draaischijf
 #define TURNINGPLATEDIRECTIONPIN 7
 #define TURNINGPLATEMOTORPIN 6
-#define TURNINGPLATELEFTSPEED 255
-#define TURNINGPLATERIGHTSPEED 255
+#define TURNINGPLATELEFTSPEED 200
+#define TURNINGPLATERIGHTSPEED 200
 
 // Declaratie variabelen
 #define STARTINGBIN 100
@@ -84,14 +84,14 @@ void turnToBin(byte newBin){
   while(newBin != currentBin){
     if(newBin > currentBin){
       startTurningPlate("right");
-      delay(1000);
+      delay(500);
       stopTurningPlate();
       currentBin = currentBin + 1;
     }
     
     if(newBin < currentBin){
       startTurningPlate("left");
-      delay(1000);
+      delay(500);
       stopTurningPlate();
       currentBin = currentBin - 1;
     }
