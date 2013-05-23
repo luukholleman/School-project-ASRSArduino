@@ -43,8 +43,7 @@ void moveToPosition(Motor m, long pos, int speed, int lowspeed, int maxoffset)
   
   //Wact even voor het uitrollen
   delay(60);
-  Serial.print("offset:");
-  Serial.println(abs(m.get_pos() - pos));
+  
   //Probeer een maximum afweiking van MAX_MOTOR_OFFSET te krijgen)
   if(abs(m.get_pos() - pos) > maxoffset)
     moveToPosition(m, pos, lowspeed, lowspeed, maxoffset);
