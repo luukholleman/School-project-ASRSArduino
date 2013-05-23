@@ -37,7 +37,7 @@ void slideForkIn(){
   analogWrite(FORK_SPEED_PIN, 0);
 }
 
-void fork_setup()
+void forkSetup()
 {
   //Zet de pinnen in de juiste modus
   pinMode(FORK_MOTOR_PIN, OUTPUT);
