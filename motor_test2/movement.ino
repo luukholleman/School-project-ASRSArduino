@@ -4,11 +4,11 @@
 */
 
 //Power en time om de robot tot stilstand te laten komen
-#define HOR_MOTOR_POINTS               425
+#define HOR_MOTOR_POINTS               400
 #define VER_MOTOR_POINTS               -770
 
 #define VERTICAL_BOTTOM_HEIGHT         -138
-#define DISTANCE_BETWEEN_DEPARTMENTS   833
+#define DISTANCE_BETWEEN_DEPARTMENTS   750
 
 //Huidige locatie
 int currentX = 0;
@@ -65,7 +65,7 @@ void moveToBinPacker()
   moveToHorizontalEnd();
   
   //Wacht tot stilstand
-  delay(1000); //fix dit!
+  delay(1000);
   
   //Sla op dat je bij de binpacker bent
   atBinPacker= true;  

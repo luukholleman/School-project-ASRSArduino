@@ -23,11 +23,15 @@ Motor verMotor = Motor(&brick, 2);
 Button horButton = Button(&brick, 1);
 Button verButton = Button(&brick, 2);
 
+//Huidige doelpositie
+long currentPosX = 0;
+long currentPosY = 0;
+
 //Ga met motor naar pos met speed
-void moveToPosition(Motor m, long pos, int speed, int lowSpeed, int maxOffset)
+void moveToPosition(Motor m, long pos, int speed, int lowspeed, int maxoffset)
 {
   //Als al binnen de offset, niks doen!
-  if(abs(m.get_pos() - pos) < maxOffset)
+  if(abs(m.get_pos() - pos) < maxoffset)
     return;
     
   //Bereken of de snelheid vooruit of achteruit moet
@@ -45,20 +49,22 @@ void moveToPosition(Motor m, long pos, int speed, int lowSpeed, int maxOffset)
   delay(60);
   
   //Probeer een maximum afweiking van MAX_MOTOR_OFFSET te krijgen)
-  if(abs(m.get_pos() - pos) > maxOffset)
-    moveToPosition(m, pos, lowSpeed, lowSpeed, maxOffset);
+  if(abs(m.get_pos() - pos) > maxoffset)
+    moveToPosition(m, pos, lowspeed, lowspeed, maxoffset);
     
 }
 
 //Verplaats x posities met horMotor
-void moveHorizontalPositions(long pos, int maxOffset)
+void moveHorizontalPositions(long pos, int maxoffset)
 {
    //Nutteloze dingen doen wij niet.
   if(pos == 0)
     return;
     
-  //Ga naar doel toe
-  moveToPosition(horMotor, horMotor.get_pos() + pos, HORIZONTAL_SPEED, HORIZONTAL_LOW_SPEED, maxoffset);
+  //Ga naar doel toe currentPosX
+  currentPosX += pos;
+  moveToPosition(horMotor, currentPosX, HORIZONTAL_SPEED, HORIZONTAL_LOW_SPEED, maxoffset);  
+  //moveToPosition(horMotor, horMotor.get_pos() + pos, HORIZONTAL_SPEED, HORIZONTAL_LOW_SPEED, maxoffset);
 }
 
 void moveHorizontalPositions(long pos)
@@ -67,14 +73,16 @@ void moveHorizontalPositions(long pos)
 }
 
 //Verplaats x posities met verMotor
-void moveVerticalPositions(long pos, int maxOffset)
+void moveVerticalPositions(long pos, int maxoffset)
 {
    //Nutteloze dingen doen wij niet.
   if(pos == 0)
     return;
     
   //Ga naar doel toe
-  moveToPosition(verMotor, verMotor.get_pos() + pos, VERTICAL_SPEED, VERTICAL_LOW_SPEED, MAX_VERTICAL_OFFSET);
+  currentPosY += pos;
+  moveToPosition(verMotor, currentPosY, VERTICAL_SPEED, VERTICAL_LOW_SPEED, MAX_VERTICAL_OFFSET);
+  //moveToPosition(verMotor, verMotor.get_pos() + pos, VERTICAL_SPEED, VERTICAL_LOW_SPEED, MAX_VERTICAL_OFFSET);
 }
 
 void moveVerticalPositions(long pos)
@@ -89,6 +97,9 @@ void moveToHorizontalEnd()
   horMotor.set_speed(HORIZONTAL_SPEED);
   while(horButton.is_released()); 
   horMotor.stop();
+  
+  currentPosX = 0;
+  horMotor.set_pos(0);
 }
 
 //Ga verticaal naar het einde
@@ -98,9 +109,12 @@ void moveToVerticalEnd()
   verMotor.set_speed(-VERTICAL_SPEED);
   while(verButton.is_released()); 
   verMotor.stop();
+  
+  currentPosY = 0;
+  verMotor.set_pos(0);
 }
 
-void motorSetup()
+void motor_setup()
 {
   //Bricktronics
   brick.begin();
@@ -116,4 +130,5 @@ void motorSetup()
   //Zet de speed op 0
   horMotor.set_speed(0);
   verMotor.set_speed(0);
+  
 }

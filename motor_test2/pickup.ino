@@ -24,7 +24,7 @@ void pickup()
 }
 
 //Zet het product neer
-void dropDown()
+void dropdown()
 {
   //Omhoog gaan
   moveVerticalPositions(-DROPDOWN_HEIGHT);
