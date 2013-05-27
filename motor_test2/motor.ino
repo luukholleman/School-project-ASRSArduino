@@ -3,13 +3,13 @@
  * @author Tim Potze
 */
 
-#define HORIZONTAL_SPEED        128
+#define HORIZONTAL_SPEED        64
 #define HORIZONTAL_LOW_SPEED    32
-#define MAX_HORIZONTAL_OFFSET   10
+#define MAX_HORIZONTAL_OFFSET   3
 
 #define VERTICAL_SPEED          128
-#define VERTICAL_LOW_SPEED      64
-#define MAX_VERTICAL_OFFSET     22
+#define VERTICAL_LOW_SPEED      70
+#define MAX_VERTICAL_OFFSET     10
 
 #define DELAY_AFTER_MOVING      75
 #define POLLING_DELAY           1
@@ -38,20 +38,26 @@ void moveToPosition(Motor m, long pos, int speed, int lowspeed, int maxoffset)
   speed *= (pos > m.get_pos() ? -1 : 1);
  
   //Bereken aan welke kant van het doel de motor nu is
-  boolean check = m.get_pos() > pos;
+  
+  //Bereken bij welke offset hij al mag stoppen
+  int goToOffset = maxoffset;
+  
+  if(m.get_pos() < pos)
+    goToOffset *= -1;
+  
+  boolean check = m.get_pos() > pos + goToOffset;
 
   //Beweeg, en wacht tot de motor aan de andere kant van het doel is
   m.set_speed(speed);  
-  while((m.get_pos() > pos) == check) delay(POLLING_DELAY);   
+  while((m.get_pos() > pos + goToOffset) == check) delay(POLLING_DELAY);   
   m.stop();
   
   //Wact even voor het uitrollen
-  delay(60);
+  delay(DELAY_AFTER_MOVING);
   
   //Probeer een maximum afweiking van MAX_MOTOR_OFFSET te krijgen)
   if(abs(m.get_pos() - pos) > maxoffset)
     moveToPosition(m, pos, lowspeed, lowspeed, maxoffset);
-    
 }
 
 //Verplaats x posities met horMotor
@@ -96,6 +102,9 @@ void moveToHorizontalEnd()
   //Zet de motor aan totdat de knop aan is geraakt
   horMotor.set_speed(HORIZONTAL_SPEED);
   while(horButton.is_released()); 
+  
+  //Wacht tot helemaal ingedrukt
+  delay(200);
   horMotor.stop();
   
   currentPosX = 0;
@@ -106,7 +115,7 @@ void moveToHorizontalEnd()
 void moveToVerticalEnd()
 {
   //Zet de motor aan totdat de knop aan is geraakt
-  verMotor.set_speed(-VERTICAL_SPEED);
+  verMotor.set_speed(-VERTICAL_LOW_SPEED);
   while(verButton.is_released()); 
   verMotor.stop();
   

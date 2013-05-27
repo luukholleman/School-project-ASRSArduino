@@ -3,12 +3,11 @@
  * @author Tim Potze
 */
 
-//Power en time om de robot tot stilstand te laten komen
-#define HOR_MOTOR_POINTS               400
-#define VER_MOTOR_POINTS               -770
+#define HOR_MOTOR_POINTS               426
+#define VER_MOTOR_POINTS               -765
 
 #define VERTICAL_BOTTOM_HEIGHT         -138
-#define DISTANCE_BETWEEN_DEPARTMENTS   750
+#define DISTANCE_BETWEEN_DEPARTMENTS   910
 
 //Huidige locatie
 int currentX = 0;

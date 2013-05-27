@@ -34,16 +34,28 @@ void calibrationTest()
 {
   moveToWarehouse();
   moveRobot(0, 0);
+  pickUp();
+  moveToBinPacker();
+  dropDown();
   
-  delay(5000);
-  moveRobot(1, 0);
-  
-  delay(5000);
-  moveRobot(2, 0);
-  
-  delay(5000);
+  moveToWarehouse();
   moveRobot(3, 0);
-   
+  pickUp();
+  moveToBinPacker();
+  dropDown();
+  
+  moveToWarehouse();
+  moveRobot(0, 2);
+  pickUp();
+  moveToBinPacker();
+  dropDown();
+  
+  moveToWarehouse();
+  moveRobot(3, 2);
+  pickUp();
+  moveToBinPacker();
+  dropDown();
+  
 }
 
 /*

@@ -4,11 +4,11 @@
 */
 
 #define PICKUP_HEIGHT            230
-#define DROPDOWN_HEIGHT          500
+#define DROPDOWN_HEIGHT          300
 #define BINPACKER_FORK_DISTANCE  600
 
 //Pak het product op
-void pickup()
+void pickUp()
 {
   //Fork uitschuiven
   slideForkOut();
@@ -24,7 +24,7 @@ void pickup()
 }
 
 //Zet het product neer
-void dropdown()
+void dropDown()
 {
   //Omhoog gaan
   moveVerticalPositions(-DROPDOWN_HEIGHT);
