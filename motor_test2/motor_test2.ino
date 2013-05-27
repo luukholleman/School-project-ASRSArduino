@@ -20,18 +20,32 @@ void setup()
   
   //Pick up all products (test)
   
-  for(int y=0;y<2;y++)
-  {
-    for(int x=0;x<3;x++)
-    {
       moveToWarehouse();
-      moveRobot(x, y);
+      moveRobot(0, 0);
       pickup();
       moveToBinPacker();
       dropdown();
-    }
-  }
-  
+      
+        
+            moveToWarehouse();
+      moveRobot(0, 1);
+      pickup();
+      moveToBinPacker();
+      dropdown();
+   
+      
+            moveToWarehouse();
+      moveRobot(2, 0);
+      pickup();
+      moveToBinPacker();
+      dropdown();
+ 
+      
+            moveToWarehouse();
+      moveRobot(2, 1);
+      pickup();
+      moveToBinPacker();
+      dropdown();
   
   //dropdown();
   

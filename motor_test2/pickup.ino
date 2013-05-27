@@ -3,9 +3,9 @@
  * @author Tim Potze
 */
 
-#define PICKUP_HEIGHT            240
+#define PICKUP_HEIGHT            230
 #define DROPDOWN_HEIGHT          500
-#define BINPACKER_FORK_DISTANCE  500
+#define BINPACKER_FORK_DISTANCE  600
 
 //Pak het product op
 void pickup()

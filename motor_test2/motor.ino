@@ -5,14 +5,14 @@
 
 #define HORIZONTAL_SPEED        128
 #define HORIZONTAL_LOW_SPEED    32
-#define MAX_HORIZONTAL_OFFSET   12
+#define MAX_HORIZONTAL_OFFSET   10
 
 #define VERTICAL_SPEED          128
-#define VERTICAL_LOW_SPEED      60
-#define MAX_VERTICAL_OFFSET     20
+#define VERTICAL_LOW_SPEED      64
+#define MAX_VERTICAL_OFFSET     22
 
 #define DELAY_AFTER_MOVING      75
-#define POLLING_DELAY           2
+#define POLLING_DELAY           1
 
 //Bricktronics. Awesome.
 Bricktronics brick = Bricktronics();

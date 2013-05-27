@@ -7,8 +7,8 @@
 #define HOR_MOTOR_POINTS               425
 #define VER_MOTOR_POINTS               -770
 
-#define VERTICAL_BOTTOM_HEIGHT         -160
-#define DISTANCE_BETWEEN_DEPARTMENTS   825
+#define VERTICAL_BOTTOM_HEIGHT         -138
+#define DISTANCE_BETWEEN_DEPARTMENTS   833
 
 //Huidige locatie
 int currentX = 0;
