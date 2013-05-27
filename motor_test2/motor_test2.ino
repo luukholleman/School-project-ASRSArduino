@@ -9,8 +9,8 @@
 void setup()
 {
   Serial.begin(9600);
-  fork_setup();
-  motor_setup();
+  forkSetup();
+  motorSetup();
    
   moveToBottom();
   

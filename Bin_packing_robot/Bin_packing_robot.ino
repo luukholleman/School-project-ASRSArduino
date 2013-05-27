@@ -1,39 +1,27 @@
 // Declaratie lopende band
-int transportingBeltDirectionPin = 4;
-int transportingBeltMotorPin = 5;
-int transportingBeltSpeed = 255;
+#define TRANSPORTING_BELT_DIRECTION_PIN 4
+#define TRANSPORTING_BELT_MOTOR_PIN 5
+#define TRANSPORTING_BELT_SPEED 200
+#define TRANSPORTING_BELT_DELAY 1000
 
 // Declaratie draaischijf
-int turningPlateDirectionPin = 7;
-int turningPlateMotorPin = 6;
-int turningPlateLeftSpeed = 255;
-int turningPlateRightSpeed = 255;
+#define TURNING_PLATE_DIRECTION_PIN 7
+#define TURNING_PLATE_MOTOR_PIN 6
+#define TURNING_PLATE_LEFT_SPEED 200
+#define TURNING_PLATE_RIGHT_SPEED 200
+#define TURN_LEFT_DELAY 500
+#define TURN_RIGHT_DELAY 500
 
-// Declaratie kleurensensor
-int blueSensorPin = A0;
-int blueSensorValue;
-int greenSensorPin = A1;
-int greenSensorValue;
-int redSensorPin = A2;
-int redSensorValue;
-
-// Commando's declaratie
-int commands[30];
-
-
-
-// Vaste variabelen declaratie
-int currentBin = 0;
+// Declaratie variabelen
+#define STARTING_BIN 100
+byte currentBin;
 
 
 void setup() {                
-  pinMode(transportingBeltDirectionPin, OUTPUT);
-  pinMode(turningPlateDirectionPin, OUTPUT);
-  pinMode(transportingBeltMotorPin, OUTPUT);
-  pinMode(turningPlateMotorPin, OUTPUT);
-  pinMode(blueSensorPin, INPUT);
-  pinMode(greenSensorPin, INPUT);
-  pinMode(redSensorPin, INPUT);
+  pinMode(TRANSPORTING_BELT_DIRECTION_PIN, OUTPUT);
+  pinMode(TRANSPORTING_BELT_MOTOR_PIN, OUTPUT);
+  pinMode(TURNING_PLATE_DIRECTION_PIN, OUTPUT);
+  pinMode(TURNING_PLATE_MOTOR_PIN, OUTPUT);
   Serial.begin(9600);
   
   // Debug only: byte om aan te geven dat de connectie werkt
@@ -46,79 +34,69 @@ void loop() {
   // Checkt op commando's van de PC
   if(Serial.available() > 0){
     
+    // Startlocatie
+    currentBin = STARTING_BIN;
+    
     // Haalt de byte op die door JAVA is verzonden
-    byte Byte = Serial.read();
+    byte newBin = Serial.read();
     
-    // Onderneemt een actie
-    commands[Byte];
+    // Beweegt de lopende band naar de goede bin
+    turnToBin(newBin);
     
+    // Plaatst product in bin
+    startTransportingBelt();
+    delay(TRANSPORTING_BELT_DELAY);
+    stopTransportingBelt();
+    
+    // Draait de lopende band terug naar de startpositie
+    turnToBin(STARTING_BIN);
+        
     // Geeft een bevestiging dat de opdracht is uitgevoerd: 101 is verzonnen
-    Serial.write(101);   
+    Serial.write(101);
   }
 }
 
 
 // Functies
 void startTransportingBelt(){
-  analogWrite(transportingBeltMotorPin, transportingBeltSpeed);
-  digitalWrite(transportingBeltDirectionPin, HIGH);
+  analogWrite(TRANSPORTING_BELT_MOTOR_PIN, TRANSPORTING_BELT_SPEED);
+  digitalWrite(TRANSPORTING_BELT_DIRECTION_PIN, HIGH);
 }
 
 void stopTransportingBelt(){
-  analogWrite(transportingBeltMotorPin, 0);
+  analogWrite(TRANSPORTING_BELT_MOTOR_PIN, 0);
 }
 
 void startTurningPlate(String Direction){
   if(Direction == "left"){
-    analogWrite(turningPlateMotorPin, turningPlateLeftSpeed);
-    digitalWrite(turningPlateDirectionPin, LOW);
+    analogWrite(TURNING_PLATE_MOTOR_PIN, TURNING_PLATE_LEFT_SPEED);
+    digitalWrite(TURNING_PLATE_DIRECTION_PIN, LOW);
   }
   
   if(Direction == "right"){
-    analogWrite(turningPlateMotorPin, turningPlateRightSpeed);
-    digitalWrite(turningPlateDirectionPin, HIGH);
+    analogWrite(TURNING_PLATE_MOTOR_PIN, TURNING_PLATE_RIGHT_SPEED);
+    digitalWrite(TURNING_PLATE_DIRECTION_PIN, HIGH);
   }
 }
 
 void stopTurningPlate(){
-  analogWrite(turningPlateMotorPin, 0);
+  analogWrite(TURNING_PLATE_MOTOR_PIN, 0);
 }
 
-String checkColor(){
-  blueSensorValue = analogRead(blueSensorPin);
-  greenSensorValue = analogRead(greenSensorPin);
-  redSensorValue = analogRead(redSensorPin);
-  
-  // if...
-  
-  // return color
-}
-
-boolean checkProduct(){
-  // checkt of er een product klaar staat
-  
-  // if...
-}
-
-void productToBin(int newBin){
+void turnToBin(byte newBin){
   while(newBin != currentBin){
     if(newBin > currentBin){
       startTurningPlate("right");
-      delay(1000);
+      delay(TURN_RIGHT_DELAY);
       stopTurningPlate();
       currentBin = currentBin + 1;
     }
     
     if(newBin < currentBin){
       startTurningPlate("left");
-      delay(1000);
+      delay(TURN_LEFT_DELAY);
       stopTurningPlate();
       currentBin = currentBin - 1;
     }
   }
-  
-  startTransportingBelt();
-  delay(1000);
-  stopTransportingBelt();
 }
-

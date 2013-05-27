@@ -24,10 +24,10 @@ Button horButton = Button(&brick, 1);
 Button verButton = Button(&brick, 2);
 
 //Ga met motor naar pos met speed
-void moveToPosition(Motor m, long pos, int speed, int lowspeed, int maxoffset)
+void moveToPosition(Motor m, long pos, int speed, int lowSpeed, int maxOffset)
 {
   //Als al binnen de offset, niks doen!
-  if(abs(m.get_pos() - pos) < maxoffset)
+  if(abs(m.get_pos() - pos) < maxOffset)
     return;
     
   //Bereken of de snelheid vooruit of achteruit moet
@@ -45,13 +45,13 @@ void moveToPosition(Motor m, long pos, int speed, int lowspeed, int maxoffset)
   delay(60);
   
   //Probeer een maximum afweiking van MAX_MOTOR_OFFSET te krijgen)
-  if(abs(m.get_pos() - pos) > maxoffset)
-    moveToPosition(m, pos, lowspeed, lowspeed, maxoffset);
+  if(abs(m.get_pos() - pos) > maxOffset)
+    moveToPosition(m, pos, lowSpeed, lowSpeed, maxOffset);
     
 }
 
 //Verplaats x posities met horMotor
-void moveHorizontalPositions(long pos, int maxoffset)
+void moveHorizontalPositions(long pos, int maxOffset)
 {
    //Nutteloze dingen doen wij niet.
   if(pos == 0)
@@ -67,7 +67,7 @@ void moveHorizontalPositions(long pos)
 }
 
 //Verplaats x posities met verMotor
-void moveVerticalPositions(long pos, int maxoffset)
+void moveVerticalPositions(long pos, int maxOffset)
 {
    //Nutteloze dingen doen wij niet.
   if(pos == 0)
@@ -100,7 +100,7 @@ void moveToVerticalEnd()
   verMotor.stop();
 }
 
-void motor_setup()
+void motorSetup()
 {
   //Bricktronics
   brick.begin();

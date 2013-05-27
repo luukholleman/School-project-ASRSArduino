@@ -65,7 +65,7 @@ void moveToBinPacker()
   moveToHorizontalEnd();
   
   //Wacht tot stilstand
-  delay(1000);
+  delay(1000); //fix dit!
   
   //Sla op dat je bij de binpacker bent
   atBinPacker= true;  
