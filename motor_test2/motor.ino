@@ -23,6 +23,8 @@ Motor verMotor = Motor(&brick, 2);
 Button horButton = Button(&brick, 1);
 Button verButton = Button(&brick, 2);
 
+ColorSensor color = ColorSensor(&brick, 3);
+
 //Huidige doelpositie
 long currentPosX = 0;
 long currentPosY = 0;
@@ -123,7 +125,7 @@ void moveToVerticalEnd()
   verMotor.set_pos(0);
 }
 
-void motor_setup()
+void motorSetup()
 {
   //Bricktronics
   brick.begin();
@@ -140,4 +142,21 @@ void motor_setup()
   horMotor.set_speed(0);
   verMotor.set_speed(0);
   
+  //Psst, de color sensor code staat tussen de motor code
+  //Niet doorvertellen hoor ;-|
+  color.begin(TYPE_COLORFULL);
+  
+}
+
+//Krijg de kleur
+int readColor() {
+  int read = BLACK;
+  
+  for(int i = 0; i < 10; i++) {
+    read = color.get_color();
+
+    delay(500);
+  }
+  
+  return read;
 }
