@@ -46,8 +46,6 @@ void loop() {
 
     // Haalt de byte op die door JAVA is verzonden
     int newBin = Serial.read();
-
-    newBin -= '0';
      
     // Beweegt de lopende band naar de goede bin
     turnToBin(newBin);
