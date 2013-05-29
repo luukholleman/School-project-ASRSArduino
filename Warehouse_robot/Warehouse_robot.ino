@@ -1,52 +1,111 @@
+/*
+ * Main code voor aansturen van warehouse robot
+ * @author Tim Potze, Luuk Holleman, Bas van Koesveld, Mike van Loe
+ */
+
 #include <Wire.h>
 #include <Bricktronics.h>
-#include <ColorSensor.h>
- 
-//Bricktronics Example: ColorButton
-//http://www.wayneandlayne.com/bricktronics
-//When the button is pressed, a single reading from 
-//the color sensor is taken and converted into a 
-//color name and printed over the Serial Console.
- 
-//Connect a button to Sensor Port 1, and a Color 
-//Sensor into Sensor Port 3.  Make sure to adjust 
-//the jumpers on Sensor Port 3 so that only pins 3
-// and 4 are connected.
- 
-Bricktronics brick = Bricktronics();
-ColorSensor color = ColorSensor(&brick, 3); //Plug a Color Sensor 
-                                            //into Sensor Port 3,
-                                            //and adjust the 
-                                            //jumpers so that
-                                            //only pins 3 and 4 
-                                            //are connected.
- 
-void setup() 
+
+#define PICKUP_PRODUCT     1
+#define DELIVER_PRODUCT    2
+#define DONE               3
+
+void setup()
 {
-    Serial.begin(9600);
-    brick.begin();
-    color.begin(TYPE_COLORFULL);
-}
- 
-void loop()
-{   
-  delay(500);
-  color.print_color(color.get_color());
+  Serial.begin(9600);
+
+  forkSetup();
+  motorSetup();
+
+  //Calibratie
+  moveToBottom();
+  moveToBinPacker();
+
+  //calibrationTest();
 }
 
-/**
-* geeft de kleur terug in string, probeert 10 keer de kleur te lezen als het zwart is
-*/
-String readColor() {
-  for(x = 0; x < 10; x++) {
-    kleurtje = color.get_color();
+void loop()
+{
+  while(!Serial.available());
+
+  //Verwerk commando
+  byte command = Serial.read();
+
+  //Voor het debuggen is het mogelijk om chars '0' - '9' te gebruiken
+  if(command >= '0' && command <= '9')
+    command -= '0';
     
-    if(kleurtje != 'black') {
-      break;
-    }
     
-    delay(500);
-  }
+  byte x;
+  byte y;
   
-  return kleurtje;
+  switch(command)
+  { 
+  case PICKUP_PRODUCT:
+    
+    //Wacht op x
+    while(!Serial.available());
+    x = Serial.read();
+
+    //Wacht op y
+    while(!Serial.available());
+    y = Serial.read();
+
+    //Pak dit product op
+    moveToWarehouse();
+    moveRobot(x, y);
+    pickUp();
+
+    //Stuur kleur terug
+    Serial.write(readColor());
+    break;
+  case DELIVER_PRODUCT:
+    //Lever product af
+    moveToBinPacker();
+    dropDown();
+    break;
+  case DONE:
+    //Ga naar start positie
+    moveToBinPacker();
+    break;
+  }
+
+  //Stuur voltooi bericht
+  Serial.write(DONE);
 }
+
+
+void calibrationTest()
+{
+  moveToWarehouse();
+  moveRobot(0, 0);
+  pickUp();
+  moveToBinPacker();
+  dropDown();
+
+  moveToWarehouse();
+  moveRobot(3, 0);
+  pickUp();
+  moveToBinPacker();
+  dropDown();
+
+  moveToWarehouse();
+  moveRobot(0, 2);
+  pickUp();
+  moveToBinPacker();
+  dropDown();
+
+  moveToWarehouse();
+  moveRobot(3, 2);
+  pickUp();
+  moveToBinPacker();
+  dropDown();
+
+}
+
+
+
+
+
+
+
